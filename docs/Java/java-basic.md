@@ -996,3 +996,218 @@ public class Main {
 
 ---
 
+## 抽象类与接口之间的区别
+
+### 抽象类（Abstract Class）
+
+抽象类是一个无法实例化的类，通常包含一个或多个抽象方法（没有方法体）。抽象类可以包含具体的方法实现，也可以包含字段和构造方法。抽象类的主要目的是作为其他类的基类（父类），提供通用的属性和行为。
+
+**特点**：
+
+* **不能实例化**：抽象类不能直接创建对象，只能被继承。
+* **包含抽象方法和具体方法**：抽象类可以包含抽象方法（没有实现）和具体方法（有实现）。
+* **可以包含字段和构造方法**：抽象类可以定义字段、构造方法和普通方法。
+* **继承关系**：一个类只能继承一个抽象类（单继承）。
+
+```java
+abstract class Animal {
+    protected String name;
+
+    public Animal(String name) {
+        this.name = name;
+    }
+
+    // 抽象方法
+    public abstract void makeSound();
+
+    // 具体方法
+    public void sleep() {
+        System.out.println(name + " is sleeping.");
+    }
+}
+
+class Dog extends Animal {
+
+    public Dog(String name) {
+        super(name);
+    }
+
+    @Override
+    public void makeSound() {
+        System.out.println(name + " says: Bark");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Dog dog = new Dog("WangCai");
+        dog.makeSound(); // 调用重写的方法
+        dog.sleep();     // 调用父类的具体方法
+    }
+}
+```
+
+在这个示例中，`Animal` 是一个抽象类，包含一个抽象方法 `makeSound()` 和一个具体方法 `sleep()`。`Dog` 类继承了 `Animal`，并实现了 `makeSound()` 方法。抽象类提供了一个统一的接口，子类通过继承和重写实现自己的特性。
+
+### 接口（Interface）
+
+接口是一种更为严格的抽象，定义了一组方法的规范，但不包含任何实现。接口中的方法默认是 `public` 和 `abstract` 的，所有字段默认是 `public static final` 的。接口主要用于对类的行为进行约束，实现该接口就意味着具备了对应的行为。类可以通过实现一个或多个接口来遵循这些规范。
+
+**特点**：
+
+* **完全抽象**：接口中的所有方法都是抽象的，没有方法体。
+* **多重实现**：一个类可以实现多个接口，从而支持多继承。
+* **没有构造方法**：接口不能包含构造方法，不能直接创建实例。
+
+```java
+interface Playable {
+    void play();  // 抽象方法
+}
+
+interface Stoppable {
+    void stop();  // 抽象方法
+}
+
+class MusicPlayer implements Playable, Stoppable {
+    private String track;
+
+    public MusicPlayer(String track) {
+        this.track = track;
+    }
+
+    @Override
+    public void play() {
+        System.out.println("Playing track: " + track);
+    }
+
+    @Override
+    public void stop() {
+        System.out.println("Stopped playing: " + track);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        MusicPlayer player = new MusicPlayer("Test Track");
+        player.play();  // 调用接口方法
+        player.stop();  // 调用接口方法
+    }
+}
+```
+
+在这个示例中，`Playable` 和 `Stoppable` 是接口，定义了播放和停止的行为规范。`MusicPlayer` 类实现了这两个接口，并提供了具体的实现。接口允许类通过实现多个接口来增加功能，弥补了 Java 不支持多继承的不足。
+
+### 现实案例类比
+
+* **抽象类**：可以将抽象类比作公司员工的通用指南。所有员工都遵循相同的基本规则（具体方法），但不同部门的员工可能有自己的工作方式（抽象方法由子类实现）。
+* **接口**：接口则像是一个合同，规定了某种角色必须具备的行为。例如，一个音乐播放器必须能够播放和停止，这些行为可以由不同类型的播放器（如 MP3 播放器、流媒体播放器）实现，但具体的播放方式由具体实现决定。
+
+### 接口的扩展
+
+在 Java 8 中，引入了接口的 default 和 static 方法。默认方法可以为接口方法提供默认实现，从而避免因为接口变更而破坏现有实现。静态方法只能通过接口本身调用，而不能通过实现类调用。
+
+```java
+interface Playable {
+    void play();  // 抽象方法
+
+    default void stop() {
+        System.out.println("Stopping playback.");
+    }
+
+    static void reset() {
+        System.out.println("Resetting player.");
+    }
+}
+
+class MusicPlayer implements Playable {
+    private String track;
+
+    public MusicPlayer(String track) {
+        this.track = track;
+    }
+
+    @Override
+    public void play() {
+        System.out.println("Playing track: " + track);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        MusicPlayer player = new MusicPlayer("Test Track");
+        player.play();  // 调用接口的实现方法
+        player.stop();  // 调用接口的默认方法
+        Playable.reset(); // 调用接口的静态方法
+    }
+}
+```
+
+在 Java 9 中，引入了接口的 private 方法，用于重用接口内部的代码逻辑。私有方法可以避免代码重复，使得默认方法和静态方法的实现更加简洁。
+
+```java
+interface Logger {
+    default void logInfo(String message) {
+        log("INFO", message);
+    }
+
+    default void logError(String message) {
+        log("ERROR", message);
+    }
+
+    // 私有方法
+    private void log(String level, String message) {
+        System.out.println("[" + level + "] " + message);
+    }
+}
+
+class AppLogger implements Logger {
+}
+
+public class Main {
+    public static void main(String[] args) {
+        AppLogger logger = new AppLogger();
+        logger.logInfo("Application started.");
+        logger.logError("An error occurred.");
+    }
+}
+```
+
+在 Java 14 中，引入了密封接口（sealed interface），允许开发者限制哪些类可以实现某个接口。
+
+```java
+sealed interface Shape permits Circle, Rectangle {
+    double area();
+}
+
+final class Circle implements Shape {
+    private double radius;
+
+    public Circle(double radius) {
+        this.radius = radius;
+    }
+
+    @Override
+    public double area() {
+        return Math.PI * radius * radius;
+    }
+}
+
+final class Rectangle implements Shape {
+    private double width, height;
+
+    public Rectangle(double width, double height) {
+        this.width = width;
+        this.height = height;
+    }
+
+    @Override
+    public double area() {
+        return width * height;
+    }
+}
+```
+
+在这个示例中，`Shape` 接口是密封的，只有 `Circle` 和 `Rectangle` 两个类可以实现它。
+
+---
+
