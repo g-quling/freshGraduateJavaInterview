@@ -879,3 +879,120 @@ public class Main {
 
 ---
 
+## Java 中面向对象的三大特征
+
+### 封装（Encapsulation）
+
+封装是将对象的状态（属性）和行为（方法）隐藏在类内部，外部只能通过公共方法访问或修改对象的状态。封装提高了数据的安全性，避免了外部代码对对象内部状态的不当修改。
+
+例如：我们的银行账户（`BankAccount`），账户余额（`balance`）是私有的，不能直接被修改。只有通过存款（`deposit`）和取款（`withdraw`）方法才能改变账户余额。
+
+```java
+class BankAccount {
+    private double balance; // 私有属性
+
+    // 公共的getter方法
+    public double getBalance() {
+        return balance;
+    }
+
+    // 公共的setter方法
+    public void deposit(double amount) {
+        if (amount > 0) {
+            balance += amount;
+        }
+    }
+
+    public void withdraw(double amount) {
+        if (amount > 0 && amount <= balance) {
+            balance -= amount;
+        }
+    }
+}
+```
+
+> **注意**：
+>
+> * **私有属性**：用 `private` 修饰类的属性，防止外部直接访问。
+> * **公共方法**：提供 `public` 的 `setter` 和 `getter` 方法，控制对属性的访问和修改。
+
+### 继承（Inheritance）
+
+继承是指一个类可以继承另一个类的属性和方法，从而实现代码的复用和扩展。子类继承父类的所有公有和受保护成员，并可以增加新的成员或重写父类的方法。
+
+例如：汽车（`Car`）是车辆（`Vehicle`）的一个子类。所有的汽车都具有车辆的一般属性和行为，如品牌（`brand`）和喇叭声（`honk`）。通过继承，`Car` 类不仅复用了 `Vehicle` 类的功能，还增加了自己特有的属性，如车型（`model`）。
+
+```java
+class Vehicle {
+    protected String brand;
+
+    public Vehicle(String brand) {
+        this.brand = brand;
+    }
+
+    public void honk() {
+        System.out.println("Beep beeeee!");
+    }
+}
+
+class Car extends Vehicle {
+    private String model;
+
+    public Car(String brand, String model) {
+        super(brand);
+        this.model = model;
+    }
+
+    @Override
+    public void honk() {
+        System.out.println("Car beeeee!");
+    }
+
+    public String getModel() {
+        return model;
+    }
+}
+```
+
+> **注意**：Java 只支持**单继承**，不支持**多继承**，一个类只能继承一个父类。但一个类可以实现**多个接口**。
+
+### 多态（Polymorphism）
+
+多态是指相同的操作可以作用于不同的对象，并表现出不同的行为。多态性允许通过父类引用来调用子类的方法，是实现灵活和可扩展代码的重要手段。**多态主要通过方法重写和接口实现来体现。**
+
+例如：动物（`Animal`）是一个抽象的概念，不同的动物有不同的叫声。通过多态性，具体的动物如狗（`Dog`）和猫（`Cat`）可以重写 `makeSound` 方法，表现出自己的特性。当你调用 `makeSound` 方法时，实际执行的是与对象类型对应的方法。
+
+```java
+class Animal {
+    public void makeSound() {
+        System.out.println("Some generic animal sound");
+    }
+}
+
+class Dog extends Animal {
+    @Override
+    public void makeSound() {
+        System.out.println("Bark");
+    }
+}
+
+class Cat extends Animal {
+    @Override
+    public void makeSound() {
+        System.out.println("Meow");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Animal myDog = new Dog();  // 父类引用指向子类对象
+        Animal myCat = new Cat();
+
+        myDog.makeSound();  // 调用 Dog 的 makeSound 方法
+        myCat.makeSound();  // 调用 Cat 的 makeSound 方法
+    }
+}
+```
+
+---
+
