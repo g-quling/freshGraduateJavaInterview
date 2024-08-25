@@ -1211,3 +1211,75 @@ final class Rectangle implements Shape {
 
 ---
 
+## Ojbect 类的常用方法及作用
+
+1. ```java
+   public boolean equals(Object obj)
+   ```
+
+   `equals` 方法用于比较两个对象是否相等。默认情况下，`equals` 方法比较的是两个对象的内存地址（引用相同则认为相等）。重写 `equals` 方法，可以实现基于对象内容的比较。
+
+2. ```java
+   public native int hashCode()
+   ```
+
+   `hashCode` 方法返回对象的哈希码，通常用于对象在哈希表中的存储和检索。`hashCode` 方法与 `equals` 方法密切相关，如果两个对象根据 `equals` 方法相等，那么它们的 `hashCode` 也应该相同。通常在重写 `equals` 方法时，也需要重写 `hashCode` 方法，以确保两个相等的对象具有相同的哈希码。
+
+3. ```java
+   public String toString()
+   ```
+
+   `toString` 方法返回对象的字符串表示。默认实现返回的是对象的类名加上“@”符号和该对象的哈希码值的十六进制字符串。通常会重写 `toString` 方法，为对象提供更详细的字符串表示。
+
+4. ```java
+   protected native Object clone() throws CloneNotSupportedException
+   ```
+
+   `clone` 方法用于创建并返回当前对象的一个副本。默认的 `clone` 方法执行的是浅拷贝，即对象的字段会被一次复制，对于字段中的对象引用，`clone` 方法只会复制引用而不是对象。如果需要实现深拷贝（即复制对象及其所有引用的对象），就需要在重写 `clone` 方法时实现深拷贝的逻辑。
+
+   > **注意**：类需要实现 `Cloneable` 接口，否则调用 `clone` 方法时会抛出 `CloneNotSupportedException`。
+
+5. ```java
+   public final native Class<?> getClass()
+   ```
+
+   `getClass` 方法返回对象运行时的类信息。通过该方法，程序可以在运行时获取对象的类型信息。
+
+   `getClass` 方法广泛使用于反射机制中，动态获取类信息、调用方法、访问字段等。它还可以用于实现通用的 `equals` 方法，如在 `equals` 中验证对象的类型。
+
+6. ```java
+   protected void finalize() throws Throwable
+   ```
+
+   `finalize` 方法在垃圾回收器将对象回收之前被调用，通常用于释放非内存资源（如文件句柄、数据库连接等）。该方法在 Java 9 后被弃用。
+
+7. ```java
+   public final native void notify()
+   ```
+
+   `notify` 方法用于唤醒一个正在等待该对象监视器的线程。如果有多个线程在等待，那么其中一个将被唤醒。唤醒的线程不会立即执行，必须等到当前线程释放锁之后，才能获得锁并继续执行。
+
+   `notify` 方法通常用于实现线程间的通信，例如在生产者-消费者模型中，用于唤醒等待的消费者或生产者线程。
+
+8. ```java
+   public final native void notifyAll()
+   ```
+
+   `notifyAll` 方法用于唤醒所有正在等待该对象监视器的线程。唤醒的所有线程将会竞争锁定这个对象，只有获得锁的线程才能继续执行。`notifyAll` 比 `notify` 更安全，因为它避免了单个线程唤醒可能导致的死锁或其他线程饥饿问题。
+
+   `notifyAll` 通常用于需要多个线程协作的场景，如一个生产者线程完成任务后，需要通知所有等待该任务完成的消费者线程，以便它们继续执行。
+
+9. ```java
+   public final void wait() throws InterruptedException
+   public final void wait(long timeout) throws InterruptedException
+   public final void wait(long timeout, int nanos) throws InterruptedException
+   ```
+
+   `wait` 方法让当前线程进入等待状态，直到其他线程调用 `notify()` 或 `notifyAll()` 方法来唤醒它，或者直到指定的时间过去。`wait()` 方法必须在同步方法或同步块中调用，即线程必须持有对象的监视器。
+
+   * `wait()`：无限期等待，直到被唤醒。
+   * `wait(long timeout)`：等待指定的毫秒数后自动唤醒。
+   * `wait(long timeout, int nanos)`：等待指定的毫秒数 + 纳秒数后自动唤醒。
+
+
+
