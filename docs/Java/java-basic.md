@@ -679,3 +679,90 @@ public class Dog extends Animal {
 
 ---
 
+## 面向过程与面向对象的区别
+
+**面向过程编程**（Procedural-Oriented Programming，POP）以过程为核心，程序通过一系列步骤顺序执行来解决问题。代码组织通常是按照功能模块划分，函数或过程直接操作数据，整个程序强调执行的流程和顺序。面向过程适合解决简单、线性的任务，结构相对简单，但在处理复杂系统时可能会遇到局限性。
+
+例如，我们要开发一个简单的图书管理系统，其中包括增加书籍、查找书籍等功能。使用面向过程的编程方式可以这样实现：
+
+```java
+public class Library {
+
+    private static ArrayList<String> books = new ArrayList<>();
+
+    public static void addBook(String book) {
+        books.add(book);
+        System.out.println("Added: " + book);
+    }
+
+    public static void findBook(String book) {
+        if (books.contains(book)) {
+            System.out.println("Found: " + book);
+        } else {
+            System.out.println("Book not found.");
+        }
+    }
+
+    public static void main(String[] args) {
+        addBook("Test Book 1");
+        addBook("Test Book 2");
+        findBook("Test Book 1");
+        findBook("Test Book 2");
+    }
+}
+```
+
+**面向对象编程**（Object-Oriented Programming，OOP）则通过将数据和行为封装在对象中，利用类和对象来组织代码。每个类封装了相关的数据和方法，程序的功能通过对象之间的交互来实现。面向对象的设计使得系统更易于扩展和维护，尤其在处理复杂系统时。
+
+```java
+class Book {
+    private String title;
+
+    public Book(String title) {
+        this.title = title;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+}
+
+class Library {
+    private ArrayList<Book> books = new ArrayList<>();
+
+    public void addBook(Book book) {
+        books.add(book);
+        System.out.println("Added: " + book.getTitle());
+    }
+
+    public void findBook(String title) {
+        for (Book book : books) {
+            if (book.getTitle().equals(title)) {
+                System.out.println("Found: " + title);
+                return;
+            }
+        }
+        System.out.println("Book not found.");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Library library = new Library();
+        library.addBook(new Book("Test Book 1"));
+        library.addBook(new Book("Test Book 2"));
+        library.findBook("Test Book 1");
+        library.findBook("Test Book 2");
+    }
+}
+```
+
+**OOP 相对于 POP 的优点**：
+
+* **模块化与封装**：OOP 将数据和行为封装在对象中，提供了更清晰的模块边界。每个类负责处理特定的任务，减少了全局变量的使用，使代码更易于管理和维护。
+* **代码复用**：通过继承和组合，OOP 提供了强大的代码复用能力。类的继承允许子类重用父类的代码，同时还能进行扩展。减少了代码的重复性，提高了开发效率。
+* **灵活性与可扩展性**：OOP 的多态性允许对象在不同的上下文中表现出不同的行为。通过接口和抽象类，开发者可以编写更为灵活和可扩展的代码，易于适应不断变化的需求。
+* **维护性**：由于OOP的模块化特性，代码的修改和扩展通常只需要改变特定的类，而不影响其他部分。使得大型项目的维护变得更加容易。
+
+---
+
