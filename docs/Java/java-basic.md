@@ -766,3 +766,116 @@ public class Main {
 
 ---
 
+## 构造方法有哪些特点？
+
+**构造方法**（Constructor）是用于创建对象实例时初始化对象的特殊方法。在 Java 中，构造方法具有以下几个主要特点：
+
+1. **与类同名**：构造方法的名称必须与类的名称完全相同。这是构造方法最显著的特征，用于区分它与普通方法。
+
+   ```java
+   class Car {
+       private String model;
+       
+       // 构造方法，与类名相同
+       public Car(String model) {
+           this.model = model;
+       }
+   }
+   ```
+
+2. **没有返回类型**：构造方法没有返回类型，也不能声明为 `void`。
+
+3. **在创建对象时自动调用**：当使用 `new` 关键字创建对象时，构造方法会被自动调用，以初始化对象的状态。
+
+   ```java
+   Car myCar = new Car("SU7");	// 自动调用构造方法
+   ```
+
+4. **可以重载**：类中可以定义多个构造方法，前提是它们的参数列表不同。但是构造方法不能被**重写**。
+
+   ```java
+   class Car {
+       private String model;
+       private int year;
+   
+       // 构造方法1：只初始化model
+       public Car(String model) {
+           this.model = model;
+       }
+   
+       // 构造方法2：初始化model和year
+       public Car(String model, int year) {
+           this.model = model;
+           this.year = year;
+       }
+   }
+   ```
+
+5. **不能被继承但可以调用父类构造方法**：构造方法不能被子类继承，但在子类的构造方法中可以使用 `super()` 调用父类的构造方法，以初始化父类的属性。
+
+   ```java
+   class Vehicle {
+       private int speed;
+   
+       public Vehicle(int speed) {
+           this.speed = speed;
+       }
+   }
+   
+   class Car extends Vehicle {
+       private String model;
+   
+       public Car(int speed, String model) {
+           super(speed);  // 调用父类的构造方法
+           this.model = model;
+       }
+   }
+   ```
+
+6. **默认构造方法**：如果一个类没有定义任何构造方法，Java 会自动提供一个无参的默认构造方法。如果定义了任何构造方法，默认构造方法将不再自动提供。
+
+   ```java
+   class Car {
+       private String model;
+   
+       // 如果没有显式定义构造方法，编译器会自动生成一个无参构造方法
+       // public Car() { }
+   }
+   ```
+
+   ```java
+   class Car {
+       private String model;
+   
+       // 如果显式定义了有参构造方法，编译器不会再自动生成无参构造方法
+       public Car(String model) {
+           this.model = model;
+       }
+   }
+   
+   public class Main {
+       public static void main(String[] args) {
+           Car myCar = new Car();	// 编译错误：找不到无参构造方法
+       }
+   }
+   ```
+
+7. **不能是 `static`、`final`、`abstract`**：构造方法不能被声明为 `static`、`final` 或 `abstract`。构造方法是实例方法，`static` 与实例无关，`final` 与继承相关，而构造方法不能被继承，`abstract` 意味着不能实例化，而构造方法的目的是创建实例。
+
+8. **可以抛出异常**：构造方法可以通过 `throws` 关键字声明抛出异常，这样在对象初始化时如果出现异常，可以通过异常处理机制进行处理。
+
+   ```java
+   class Car {
+       private String model;
+   
+       public Car(String model) throws Exception {
+           if (model == null) {
+               throw new Exception("Model cannot be null");
+           }
+           this.model = model;
+       }
+   }
+   ```
+
+---
+
