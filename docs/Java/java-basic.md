@@ -1281,5 +1281,125 @@ final class Rectangle implements Shape {
    * `wait(long timeout)`：等待指定的毫秒数后自动唤醒。
    * `wait(long timeout, int nanos)`：等待指定的毫秒数 + 纳秒数后自动唤醒。
 
+---
 
+## 深拷贝与浅拷贝的区别
+
+### 浅拷贝（Shallow Copy）
+
+浅拷贝是指创建一个新对象，这个新对象是原对象的一个浅层副本。新对象中的所有字段与原对象的字段具有相同的值。如果字段是基本类型（如 `int`、`float` 等），那么新对象中的字段将复制这些值。如果字段是引用类型（如对象、数组等），浅拷贝只复制引用，指向原对象的内存地址。
+
+* 对于基本类型的字段，浅拷贝会复制值。
+
+* 对于引用类型的字段，浅拷贝只复制引用（内存地址），不复制引用指向的实际对象。因此，原对象和副本对象中的引用类型字段指向相同的对象。
+
+**优点**：实现简单，性能高效。
+
+**缺点**：如果对象中包含引用类型的字段，修改这些字段的内容会影响到原对象和副本对象，导致副本对象不独立。
+
+```java
+class Address {
+    String city;
+
+    public Address(String city) {
+        this.city = city;
+    }
+}
+
+class Person implements Cloneable {
+    String name;
+    Address address;
+
+    public Person(String name, Address address) {
+        this.name = name;
+        this.address = address;
+    }
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();  // 浅拷贝
+    }
+}
+
+public class Main {
+    public static void main(String[] args) throws CloneNotSupportedException {
+        Address address = new Address("BeiJing");
+        Person person1 = new Person("XiaoMing", address);
+        Person person2 = (Person) person1.clone();
+
+        System.out.println("Before modification:");
+        System.out.println(person1.name + " lives in " + person1.address.city);  // XiaoMing lives in BeiJing
+        System.out.println(person2.name + " lives in " + person2.address.city);  // XiaoMing lives in BeiJing
+
+        person2.address.city = "ShangHai";  // 修改副本对象的引用字段
+
+        System.out.println("After modification:");
+        System.out.println(person1.name + " lives in " + person1.address.city);  // XiaoMing lives in ShangHai
+        System.out.println(person2.name + " lives in " + person2.address.city);  // XiaoMing lives in ShangHai
+    }
+}
+```
+
+### 深拷贝（Deep Copy）
+
+深拷贝是指创建一个新对象，这个新对象是原对象的一个完全独立的副本。新对象中的所有字段，无论是基本类型还是引用类型，都会被复制。对于引用类型，深拷贝不仅复制引用，还会创建引用对象的一个副本，确保原对象和副本对象彼此独立。
+
+* 对于基本类型的字段，深拷贝会复制值。
+* 对于引用类型的字段，深拷贝会递归复制引用对象的所有内容，确保副本对象和原对象独立存在。
+
+**优点**：副本对象与原对象完全独立，互不影响。
+
+**缺点**：实现复杂，性能开销较大，特别是当对象的层次结构较深时。
+
+```java
+class Address {
+    String city;
+
+    public Address(String city) {
+        this.city = city;
+    }
+
+    // 深拷贝的辅助方法
+    public Address deepCopy() {
+        return new Address(this.city);
+    }
+}
+
+class Person implements Cloneable {
+    String name;
+    Address address;
+
+    public Person(String name, Address address) {
+        this.name = name;
+        this.address = address;
+    }
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        Person cloned = (Person) super.clone();
+        cloned.address = this.address.deepCopy();  // 深拷贝
+        return cloned;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) throws CloneNotSupportedException {
+        Address address = new Address("BeiJing");
+        Person person1 = new Person("XiaoMing", address);
+        Person person2 = (Person) person1.clone();
+
+        System.out.println("Before modification:");
+        System.out.println(person1.name + " lives in " + person1.address.city);  // XiaoMing lives in BeiJing
+        System.out.println(person2.name + " lives in " + person2.address.city);  // XiaoMing lives in BeiJing
+
+        person2.address.city = "ShangHai";  // 修改副本对象的引用字段
+
+        System.out.println("After modification:");
+        System.out.println(person1.name + " lives in " + person1.address.city);  // XiaoMing lives in BeiJing
+        System.out.println(person2.name + " lives in " + person2.address.city);  // XiaoMing lives in ShangHai
+    }
+}
+```
+
+---
 
