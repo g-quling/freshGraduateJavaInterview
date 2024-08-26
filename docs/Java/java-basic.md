@@ -1618,3 +1618,56 @@ public class Main {
 
 ---
 
+## 为什么两个对象 hashCode 值相同，但内容不一定相同？
+
+在 Java 中，`hashCode` 方法用于返回对象的哈希码，这个哈希码是一个整数，用于在基于哈希的数据结构（如 `HashMap`、`HashSet`）中确定对象的存储位置。尽管 `hashCode` 值对于提升查找效率非常重要，但两个对象拥有相同的 `hashCode` 值并不意味着它们是相等的，因为 `hashCode` 方法返回的哈希码是一个有限的整数值，而可能的对象状态组合是无限的。因此，不同的对象可能会生成相同的 `hashCode` 值，这种现象就是哈希碰撞。
+
+### 哈希碰撞产生的原因
+
+1. **有限的哈希空间**：`hashCode` 方法返回的哈希码是一个 32 位的整数（`int`），其取值范围是有限的（大约 43 亿个不同的哈希码）。但是，可能的对象组合和状态却是无限的。因此，存在多个对象共享同一个哈希码的可能性，这是哈希碰撞产生的根本原因。
+2. **哈希函数的局限性**：即使哈希函数设计得再好，也无法避免所有的哈希碰撞。哈希函数的设计通常会平衡性能和哈希码的均匀分布，尽量减少碰撞的发生。然而，由于哈希空间的限制，碰撞是不可避免的。
+
+```java
+class Person {
+    private String name;
+    private int age;
+
+    public Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    @Override
+    public int hashCode() {
+        return age;  // 简化示例，使用 age 作为 hashCode
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Person person = (Person) obj;
+        return age == person.age && name.equals(person.name);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Person p1 = new Person("John", 30);
+        Person p2 = new Person("Bob", 30);
+
+        System.out.println(p1.hashCode() == p2.hashCode());  // 输出 true
+        System.out.println(p1.equals(p2));  // 输出 false
+    }
+}
+```
+
+### 哈希碰撞的处理
+
+在基于哈希的集合中（如 `HashMap`、`HashSet`），哈希碰撞并不会导致程序错误。这些数据结构会在哈希碰撞时，使用不同的策略来处理碰撞的对象：
+
+* **链地址法**：使用链表或其他数据结构存储在同一个哈希值下的所有对象。查找时，先找到哈希码对应的桶，然后在该桶的链表中逐个使用 `equals` 方法比较对象，直到找到目标对象为止。
+* **开放地址法**：寻找另一个位置存放碰撞的对象，通常使用线性探测、二次探测或双重散列来解决冲突。
+
+---
+
