@@ -1570,3 +1570,51 @@ public class Main {
 
 ---
 
+## hashCode() 方法的作用
+
+`hashCode` 方法返回对象的哈希码，是一个整数值。这个哈希码用于在基于哈希的数据结构中确定对象的存储位置。Java 默认的 `hashCode` 方法是基于对象的内存地址生成的，但在实际应用中，通常会根据对象的属性重写 `hashCode` 方法。
+
+1. **提高查找效率**：在基于哈希的数据结构（如 `HashMap`、`HashSet`）中，`hashCode` 方法的返回值用于计算对象在哈希表中的存储位置（即“桶”）。当我们向 `HashMap` 或 `HashSet` 中插入一个对象时，首先调用 `hashCode` 方法计算其哈希码，然后根据这个哈希码找到相应的桶位置。
+2. **确保哈希表中的一致性**：`hashCode` 方法和 `equals` 方法一起保证了哈希表中对象的一致性。如果两个对象根据 `equals` 方法相等，它们的 `hashCode` 必须相等，这确保了这些对象在哈希表中会被放置在同一个位置。如果 `hashCode` 方法未正确实现，即使两个对象内容相同，它们可能会被放在不同的位置，从而导致哈希表中的不一致行为。
+3. **支持集合类的正确行为**：集合类通过 `hashCode` 来确定对象是否已经存在，或者在删除对象时，首先通过 `hashCode` 快速定位对象的位置。因此，正确实现 `hashCode` 方法对于集合类的正确行为至关重要。
+
+```java
+class Person {
+    private String name;
+    private int age;
+
+    public Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Person person = (Person) obj;
+        return age == person.age && name.equals(person.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, age);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Map<Person, String> map = new HashMap<>();
+        Person p1 = new Person("John", 30);
+        Person p2 = new Person("John", 30);
+
+        map.put(p1, "Engineer");
+
+        // 即使 p1 和 p2 是不同的对象，p2 依然能找到 p1 对应的键值对
+        System.out.println(map.get(p2));  // 输出 "Engineer"
+    }
+}
+```
+
+---
+
