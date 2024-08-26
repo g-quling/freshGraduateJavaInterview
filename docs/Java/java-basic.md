@@ -1525,3 +1525,48 @@ public class Main {
 
 ---
 
+## hashCode() 方法和 equals() 方法的关系
+
+1. **一致性**：如果两个对象根据 `equals` 方法是相等的，那么它们的 `hashCode` 值必须相等。这是为了确保在基于哈希的集合中正确处理这些对象。
+2. **不同对象的哈希码可以相同**：如果两个对象的 `hashCode` 相等，它们不一定是相等的对象。也就是说，`equals` 方法可能返回 `false`，这在哈希表中会导致冲突，但哈希表可以处理这种情况。
+3. **与集合的关系**：在使用基于哈希的集合时（如 `HashSet`、`HashMap`），如果两个对象的 `hashCode` 不同，集合会认为它们是不同的对象，存储在不同的桶中。如果 `hashCode` 相同，集合会进一步使用 `equals` 方法来检查对象是否真的相等。
+4. **重写 `equals` 时必须重写 `hashCode`**：这是为了保证在使用集合时能正确处理对象。例如，如果你只重写了 `equals` 方法，但没有重写 `hashCode`，那么即使两个对象根据 `equals` 方法相等，它们的 `hashCode` 可能不同，这会导致在集合中的不一致行为。
+5. **使用相同字段**：在实现 `hashCode` 和 `equals` 方法时，通常应该使用相同的字段。例如，如果 `equals` 方法使用 `name` 和 `age` 字段来判断对象是否相等，那么 `hashCode` 方法也应该基于这两个字段来计算哈希码。
+
+```java
+class Person {
+    private String name;
+    private int age;
+
+    public Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Person person = (Person) obj;
+        return age == person.age && name.equals(person.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, age);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Person p1 = new Person("John", 30);
+        Person p2 = new Person("John", 30);
+        
+        System.out.println(p1.equals(p2));  // 输出 true
+        System.out.println(p1.hashCode() == p2.hashCode());  // 输出 true
+    }
+}
+```
+
+---
+
