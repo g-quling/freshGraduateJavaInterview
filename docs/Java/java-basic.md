@@ -1403,3 +1403,60 @@ public class Main {
 
 ---
 
+## Java 中的参数传递
+
+在 Java 中，所有的参数传递都是通过**值传递**（pass-by-value）进行的。虽然有时我们可能会听到“按引用传递”的说法，但实际上在 Java 中并不存在真正的“按引用传递”。
+
+### 值传递（pass-by-value）
+
+当我们在方法中传递参数时，Java 会复制参数的值，并将这个副本传递给方法。方法接收到的是这个值的副本，而不是原始变量本身。因此，对参数的任何修改不会影响到方法外部的原始变量。
+
+* **基本类型的参数传递**：对于基本数据类型（如 `int`、`float`、`double` 等），传递的是值本身的副本。方法内部对参数的修改不会影响原始变量。
+
+  ```java
+  public class Main {
+      public static void modifyPrimitive(int x) {
+          x = 10;  // 修改的是副本，不影响原始变量
+      }
+  
+      public static void main(String[] args) {
+          int a = 5;
+          modifyPrimitive(a);
+          System.out.println(a);  // 输出 5，原始变量未被修改
+      }
+  }
+  ```
+
+* **引用类型的参数传递**：对于引用类型（如对象、数组等），传递的也是值，但这个值是对象引用的副本。虽然方法接收到的是引用的副本，但这个副本仍然指向原始对象。因此，通过这个引用可以修改对象的内部状态，但不能更改引用本身所指向的对象。
+
+  ```java
+  class Person {
+      String name;
+  
+      public Person(String name) {
+          this.name = name;
+      }
+  }
+  
+  public class Main {
+      public static void modifyObject(Person p) {
+          p.name = "XiaoHong";  // 修改的是对象的属性
+      }
+  
+      public static void reassignObject(Person p) {
+          p = new Person("XiaoWang");  // 重新分配引用，不影响原始对象
+      }
+  
+      public static void main(String[] args) {
+          Person person = new Person("XiaoMing");
+          modifyObject(person);
+          System.out.println("After modifyObject: " + person.name);  // 输出 "XiaoHong"，对象的属性被修改
+  
+          reassignObject(person);
+          System.out.println("After reassignObject: " + person.name);  // 仍然输出 "XiaoHong"，引用没有改变
+      }
+  }
+  ```
+
+---
+
