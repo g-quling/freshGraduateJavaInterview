@@ -1460,3 +1460,68 @@ public class Main {
 
 ---
 
+## == 和 equals() 方法的区别
+
+### `==` 操作符
+
+`==` 操作符用于比较两个操作数的**内存地址**，即判断两个引用是否指向同一个对象。对于基本数据类型，`==` 用于比较它们的值。
+
+* **基本类型**：对于基本数据类型（如 `int`、`char`、`float` 等），`==` 比较的是它们的值。
+* **引用类型**：对于引用类型（如对象、数组等），`==` 比较的是两个引用是否指向同一个内存地址。
+
+```java
+public class Main {
+    public static void main(String[] args) {
+        int a = 5;
+        int b = 5;
+        System.out.println(a == b);  // 输出 true，比较基本类型的值
+
+        String str1 = new String("Hello");
+        String str2 = new String("Hello");
+        System.out.println(str1 == str2);  // 输出 false，比较引用类型的内存地址
+
+        String str3 = "Hello";
+        String str4 = "Hello";
+        System.out.println(str3 == str4);  // 输出 true，比较引用类型的内存地址（常量池中的相同字符串）
+    }
+}
+```
+
+### `equals()` 方法
+
+`equals()` 方法用于比较两个对象的**内容**是否相等。`equals()` 方法在 `Object` 类中被定义，并且可以在子类中重写，以实现对象内容的比较。
+
+* **默认实现**：在 `Object` 类中的 `equals()` 方法默认比较两个对象的内存地址，效果与 `==` 操作符相同。
+* **重写**：在实际应用中，通常会重写 `equals()` 方法，以根据对象的实际内容来判断对象是否相等。
+
+```java
+class Person {
+    String name;
+
+    public Person(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Person person = (Person) obj;
+        return name.equals(person.name);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Person p1 = new Person("John");
+        Person p2 = new Person("John");
+        System.out.println(p1.equals(p2));  // 输出 true，比较对象的内容
+
+        Person p3 = new Person("Bob");
+        System.out.println(p1.equals(p3));  // 输出 false，内容不相等
+    }
+}
+```
+
+---
+
